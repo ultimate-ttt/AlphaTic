@@ -60,6 +60,10 @@ class Move:
         self.board_position = board_position
         self.tile_position = tile_position
 
+    def __repr__(self):
+        return str(self.board_position.x) + '/' + str(self.board_position.y) + '-' + str(
+            self.tile_position.x) + '/' + str(self.tile_position.y)
+
 
 class TileInformation:
     position: Point
@@ -159,6 +163,17 @@ class TicTacToeGame:
             active_boards = map(lambda board: board.position, all_unfinished_boards)
 
         return active_boards
+
+    def get_possible_moves(self):
+        active_boards = self.get_current_active_boards()
+        possible_moves: [Move] = []
+        for active_board_position in active_boards:
+            board = next(board for board in self.board if board.position == active_board_position)
+            for tile in board.tiles:
+                if tile.value == TileValue.empty:
+                    possible_moves.append(Move(active_board_position, tile.position))
+
+        return possible_moves
 
     def print_game(self):
         smallboard_size = 3
