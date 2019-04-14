@@ -9,6 +9,9 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def __repr__(self):
+        return str(self.x) + '/' + str(self.y)
+
 
 class Player:
     cross = 0
@@ -134,6 +137,28 @@ class TicTacToeGame:
 
     def get_winresult(self):
         return self.__get_winresult_for_board(self.board)
+
+    def get_current_active_boards(self):
+        if len(self.moves) == 0:
+            all_boards: [Point] = []
+            for x in range(0, 3):
+                for y in range(0, 3):
+                    all_boards.append(Point(x, y))
+            return all_boards
+
+        if self.get_winresult().finished:
+            return []
+
+        last_move = self.moves[-1].tile_position
+        active_boards = [last_move]
+
+        pointed_at_board = next(board for board in self.board if board.position == last_move)
+        board_finished = pointed_at_board.value != TileValue.empty
+        if board_finished:
+            all_unfinished_boards = filter(lambda board: board.value == TileValue.empty, self.board)
+            active_boards = map(lambda board: board.position, all_unfinished_boards)
+
+        return active_boards
 
     def print_game(self):
         smallboard_size = 3
